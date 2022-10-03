@@ -4,7 +4,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     let
       name = "horoscope";
-      dockerOrg = "detsys";
+      owner = "ghcr.io/DeterminateSystems";
       goVersion = 19;
       goOverlay = self: super: {
         go = super."go_1_${toString goVersion}";
@@ -44,7 +44,7 @@
                 run = "${horoscope}/bin/linux_amd64/${name}";
               in
               pkgs.dockerTools.buildLayeredImage {
-                name = "${dockerOrg}/${name}";
+                name = "${owner}/${name}";
 
                 config.Cmd = [ run ];
               };
