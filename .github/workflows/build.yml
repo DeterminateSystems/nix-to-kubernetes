@@ -44,6 +44,8 @@ jobs:
 
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
+      - name: Cache build artifacts
+        run: |
           nix flake archive --json \
             | jq -r '.path,(.inputs|to_entries[].value.path)' \
             | cachix push "${{ secrets.CACHIX_CACHE }}"
