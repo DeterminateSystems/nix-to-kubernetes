@@ -9,7 +9,15 @@
       goOverlay = self: super: {
         go = super."go_1_${toString goVersion}";
       };
-      overlays = [ goOverlay ];
+      goLinuxBuildOverlay = self: super: {
+        buildGoModuleLinuxAmd64 = super.buildGoModule.override {
+          go = super.go // {
+            GOOS = "linux";
+            GOARCH = "amd64";
+            CGO_ENABLED = 0;
+          };
+        };
+      };
     in
 
     # Specific to CI environment
@@ -17,19 +25,18 @@
       (system:
         let
           pkgs = import nixpkgs {
-            inherit overlays;
             system = "x86_64-linux";
+            overlays = [ goOverlay goLinuxBuildOverlay ];
           };
         in
         {
           packages = rec {
             default = horoscope;
 
-            horoscope = pkgs.buildGoModule {
+            horoscope = pkgs.buildGoModuleLinuxAmd64 {
               inherit name;
               src = ./.;
               vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
-              CGO_ENABLED = 0;
             };
 
             docker =

@@ -42,6 +42,10 @@ jobs:
 
           docker push "${IMAGE_TAG}"
 
+          LATEST="detsys/horoscope:latest"
+
+          docker push "${LATEST}"
+
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
 
       - name: Cache build artifacts
