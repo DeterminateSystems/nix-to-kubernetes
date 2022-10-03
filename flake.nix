@@ -5,6 +5,8 @@
     let
       name = "horoscope";
       owner = "ghcr.io/DeterminateSystems";
+      vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
+
       goVersion = 19;
       goOverlay = self: super: {
         go = super."go_1_${toString goVersion}";
@@ -34,9 +36,8 @@
             default = horoscope;
 
             horoscope = pkgs.buildGoModuleLinuxAmd64 {
-              inherit name;
+              inherit name vendorSha256;
               src = ./.;
-              vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
             };
 
             docker =
@@ -72,5 +73,17 @@
                 terraform
               ];
           };
+
+          apps.default =
+            let
+              horoscope = pkgs.buildGoModule {
+                inherit name vendorSha256;
+                src = ./.;
+              };
+            in
+            {
+              type = "app";
+              program = "${horoscope}/bin/horoscope";
+            };
         });
 }
