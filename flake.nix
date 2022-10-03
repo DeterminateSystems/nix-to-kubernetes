@@ -27,7 +27,7 @@
             horoscope = pkgs.buildGoModule {
               inherit name;
               src = ./.;
-              vendorSha256 = pkgs.lib.fakeHash;
+              vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
               CGO_ENABLED = 0;
             };
 
