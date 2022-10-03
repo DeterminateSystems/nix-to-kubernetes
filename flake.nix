@@ -4,86 +4,64 @@
   outputs = { self, nixpkgs, flake-utils }:
     let
       name = "horoscope";
-      owner = "ghcr.io/DeterminateSystems";
+
+      image = {
+        inherit name;
+        registry = "ghcr.io";
+        owner = "DeterminateSystems";
+      };
+
       vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
 
       goVersion = 19;
       goOverlay = self: super: {
         go = super."go_1_${toString goVersion}";
       };
-      goLinuxBuildOverlay = self: super: {
-        buildGoModuleLinuxAmd64 = super.buildGoModule.override {
-          go = super.go // {
-            GOOS = "linux";
-            GOARCH = "amd64";
-            CGO_ENABLED = 0;
-          };
-        };
-      };
+      overlays = [ goOverlay ];
     in
 
-    # Specific to CI environment
-    flake-utils.lib.eachSystem [ "x86_64-linux" ]
+    # Per-system outputs
+    flake-utils.lib.eachDefaultSystem
       (system:
         let
           pkgs = import nixpkgs {
-            system = "x86_64-linux";
-            overlays = [ goOverlay goLinuxBuildOverlay ];
+            inherit overlays system;
           };
         in
         {
           packages = rec {
             default = horoscope;
 
-            horoscope = pkgs.buildGoModuleLinuxAmd64 {
+            horoscope = pkgs.buildGoModule {
               inherit name vendorSha256;
               src = ./.;
             };
 
             docker =
-              let
-                run = "${horoscope}/bin/linux_amd64/${name}";
-              in
               pkgs.dockerTools.buildLayeredImage {
-                name = "${owner}/${name}";
-
-                config.Cmd = [ run ];
+                name = "${image.registry}/${image.owner}/${image.name}";
+                config = {
+                  Cmd = [ "${self.packages.${system}.default}/bin/${name}" ];
+                  ExposedPorts."8080/tcp" = { };
+                };
+                maxLayers = 120;
               };
           };
-        })
 
-    //
-
-    # Cross-platform logic
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [ goOverlay ];
-          };
-        in
-        {
           devShells.default = pkgs.mkShell {
             buildInputs = with pkgs;
               [
+                # Golang
                 go
+                gotools
+
+                # Utilities
                 jq
+
+                # DevOps
                 nomad
                 terraform
               ];
           };
-
-          apps.default =
-            let
-              horoscope = pkgs.buildGoModule {
-                inherit name vendorSha256;
-                src = ./.;
-              };
-            in
-            {
-              type = "app";
-              program = "${horoscope}/bin/horoscope";
-            };
         });
 }
