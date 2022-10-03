@@ -51,4 +51,4 @@ jobs:
 
       - name: Demonstrate that storing image tag works
         run: |
-          echo "Storing image tag ${IMAGE_TAG} in the environment was successful"
+          echo "Storing image tag ${{ env.IMAGE_TAG }} in the environment was successful"
