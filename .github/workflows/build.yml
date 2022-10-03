@@ -43,7 +43,9 @@ jobs:
 
           docker push "${IMAGE_TAG}"
 
-          LATEST="ghrc.io/${{ github.repository_owner }}/horoscope:latest"
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+
+          LATEST="ghrc.io/${OWNER}/horoscope:latest"
           docker tag "${IMAGE_TAG}" "${LATEST}"
           docker push "${LATEST}"
 
