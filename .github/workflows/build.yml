@@ -48,3 +48,7 @@ jobs:
           nix flake archive --json \
             | jq -r '.path,(.inputs|to_entries[].value.path)' \
             | cachix push "${{ secrets.CACHIX_CACHE }}"
+
+      - name: Demonstrate that storing image tag works
+        run: |
+          echo "Storing image tag ${IMAGE_TAG} in the environment was successful"
