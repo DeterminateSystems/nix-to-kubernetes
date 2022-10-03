@@ -69,6 +69,7 @@
                 go
                 jq
                 nomad
+                terraform
               ];
           };
         });
