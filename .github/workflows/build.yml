@@ -43,7 +43,7 @@ jobs:
           docker push "${IMAGE_TAG}"
 
           LATEST="detsys/horoscope:latest"
-
+          docker tag "${IMAGE_TAG}" "${LATEST}"
           docker push "${LATEST}"
 
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
