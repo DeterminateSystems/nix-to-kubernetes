@@ -16,6 +16,3 @@ indent_size = 4
 
 [*.go]
 indent_size = 4
-
-[VERSION]
-insert_final_newline = false
