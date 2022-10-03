@@ -19,6 +19,12 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v10
+        with:
+          name: "${{ secrets.CACHIX_CACHE }}"
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
       - name: Build Docker image for horoscope service using Nix
         run: nix build ".#docker"
 
@@ -31,6 +37,13 @@ jobs:
       - name: Load and push image to Docker Hub
         run: |
           export IMAGE_TAG=$(docker load < result | grep -Po 'Loaded image: \K.*')
+
           echo "Pushing image ${IMAGE_TAG} to Docker Hub"
+
           docker push "${IMAGE_TAG}"
-          #echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+
+          nix flake archive --json \
+            | jq -r '.path,(.inputs|to_entries[].value.path)' \
+            | cachix push "${{ secrets.CACHIX_CACHE }}"

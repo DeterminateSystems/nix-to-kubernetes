@@ -4,6 +4,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     let
       name = "horoscope";
+      dockerOrg = "detsys";
       goVersion = 19;
       goOverlay = self: super: {
         go = super."go_1_${toString goVersion}";
@@ -36,7 +37,7 @@
                 run = "${horoscope}/bin/linux_amd64/${name}";
               in
               pkgs.dockerTools.buildLayeredImage {
-                inherit name;
+                name = "${dockerOrg}/${name}";
 
                 config.Cmd = [ run ];
               };
@@ -59,6 +60,7 @@
             buildInputs = with pkgs;
               [
                 go
+                jq
                 nomad
               ];
           };
