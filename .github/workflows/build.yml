@@ -31,5 +31,6 @@ jobs:
       - name: Load and push image to Docker Hub
         run: |
           export IMAGE_TAG=$(docker load < result | grep -Po 'Loaded image: \K.*')
+          echo "Pushing image ${IMAGE_TAG} to Docker Hub"
           docker push "${IMAGE_TAG}"
           #echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
