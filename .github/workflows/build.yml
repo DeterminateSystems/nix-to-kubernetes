@@ -39,9 +39,14 @@ jobs:
         run: |
           export IMAGE_TAG=$(docker load < result | grep -Po 'Loaded image: \K.*')
           echo "Pushing image ${IMAGE_TAG} to GHCR"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
           docker push "${IMAGE_TAG}"
 
-          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+      - name: Tag new image as latest
+        run: |
+          LATEST=$(nix develop --command print-latest-image)
+          docker tag "${{ env.IMAGE_TAG }}" "${LATEST}"
+          docker push "${LATEST}"
 
       - name: Cache build artifacts
         run: |

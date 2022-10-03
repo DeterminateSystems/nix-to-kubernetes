@@ -27,6 +27,10 @@
           pkgs = import nixpkgs {
             inherit overlays system;
           };
+
+          printLatestImage = pkgs.writeScriptBin "print-latest-image" ''
+            echo ${image.registry}/${image.owner}/${image.name}:latest | tr '[:upper:]' '[:lower:]'
+          '';
         in
         {
           packages = rec {
@@ -57,6 +61,7 @@
 
                 # Utilities
                 jq
+                printLatestImage
 
                 # DevOps
                 nomad

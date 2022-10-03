@@ -9,7 +9,7 @@ import (
 func main() {
     routes := gin.Default()
     routes.NoRoute(func(c *gin.Context) {
-        c.String(http.StatusOK, "Here is your horoscope")
+        c.Status(http.StatusNotImplemented)
     })
     routes.Run()
 }
