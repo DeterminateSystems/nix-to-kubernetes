@@ -41,6 +41,9 @@
               src = ./.;
             };
 
+            # Intended only for CI. The image fails to run if you build this image on a
+            # non-x86_64-linux system, despite the build succeeding. There are ways around this in
+            # Nix but in this case we only need to build the image in CI.
             docker =
               pkgs.dockerTools.buildLayeredImage {
                 name = "${image.registry}/${image.owner}/${image.name}";
