@@ -20,11 +20,11 @@ resource "digitalocean_ssh_key" "nomad" {
 
 resource "digitalocean_droplet" "nomad-client" {
   name   = "nomad-client"
-  image  = "ubuntu-22-04-x64"
-  size   = "s-2vcpu-4gb"
+  image  = var.nomad_image
+  size   = var.nomad_client_size
   region = var.do_region
   ssh_keys = [
-    digitalocean_ssh_key.nomad.fingerprint
+    digitalocean_ssh_key.nomad.id
   ]
 
   connection {
@@ -35,6 +35,10 @@ resource "digitalocean_droplet" "nomad-client" {
   }
 }
 
-output "nomad-client-ip" {
-  value = digitalocean_droplet.nomad-client.ipv4_address
+resource "digitalocean_droplet" "nomad-server" {
+  name   = "nomad-server-${count.index + 1}"
+  count  = var.nomad_server_count
+  image  = var.nomad_image
+  size   = var.nomad_server_size
+  region = var.do_region
 }

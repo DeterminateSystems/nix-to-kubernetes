@@ -5,12 +5,25 @@ variable "do_token" {
 
 variable "do_region" {
   type        = string
-  default     = "nyc1"
   description = "The DigitalOcean region to use"
 }
 
-variable "num_nomad_servers" {
+variable "nomad_image" {
+  type        = string
+  description = "Droplet image to use for Nomad"
+}
+
+variable "nomad_server_count" {
   type        = number
-  default     = 1
   description = "The number of Nomad servers to run"
+}
+
+variable "nomad_client_size" {
+  type        = string
+  description = "Nomad client Droplet size"
+}
+
+variable "nomad_server_size" {
+  type        = string
+  description = "Nomad server Droplet size"
 }
