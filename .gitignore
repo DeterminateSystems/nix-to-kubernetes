@@ -3,8 +3,3 @@
 
 # Nix artifacts
 result
-
-# Terraform artifacts
-/.terraform
-.terraform.lock.hcl
-terraform.tfstate*

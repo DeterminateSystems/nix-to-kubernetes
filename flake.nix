@@ -68,7 +68,6 @@
 
                 # DevOps
                 nomad
-                terraform
               ];
           };
         });
