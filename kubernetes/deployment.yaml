@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
         - name: horoscope
-          image: registry.k8s.io/echoserver:1.4 # Just a "seed" image that we'll update later
+          image: ghcr.io/determinatesystems/horoscope:latest
           ports:
             - containerPort: 8080
