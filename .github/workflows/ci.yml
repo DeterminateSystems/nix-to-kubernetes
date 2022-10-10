@@ -75,31 +75,31 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Authenticate with DigitalOcean
+        env:
+          DO_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
         run: |
-          nix develop --command \
-            doctl auth init --access-token ${{ secrets.DIGITALOCEAN_TOKEN }}
+          nix develop --command do-authenticate
 
       - name: Import kubeconfig
+        env:
+          K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
         run: |
-          nix develop --command \
-            doctl kubernetes cluster kubeconfig save ${{ secrets.K8S_CLUSTER_NAME }}
+          nix develop --command do-get-kubeconfig
 
       - name: Set Kubernetes context
+        env:
+          K8S_CONTEXT: ${{ secrets.K8S_CONTEXT }}
         run: |
-          nix develop --command \
-            kubectx ${{ secrets.K8S_CONTEXT }}
+          nix develop --command k8s-set-ctx
 
       - name: List nodes (to verify that kubectl can interact with the cluster)
         run: |
-          nix develop --command \
-            kubectl get nodes
+          nix develop --command k8s-get-nodes
 
       - name: Deploy Deployment (heh)
         run: |
-          nix develop --command \
-            kubectl apply --filename=./kubernetes/deployment.yaml
+          nix develop --command k8s-apply
 
       - name: Restart the Deployment
         run: |
-          nix develop --command \
-            kubectl rollout restart deployment.apps/horoscope-deployment
+          nix develop --command k8s-restart-deployment

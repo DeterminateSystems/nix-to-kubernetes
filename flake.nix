@@ -41,6 +41,8 @@
           printLatestImage = pkgs.writeScriptBin "print-latest-image" ''
             echo ${image.registry}/${image.owner}/${image.name}:latest | tr '[:upper:]' '[:lower:]'
           '';
+
+          ci = import ./nix/ci.nix { inherit pkgs; };
         in
         {
           packages = rec {
@@ -66,7 +68,7 @@
           };
 
           devShells.default = pkgs.mkShell {
-            buildInputs = with pkgs;
+            buildInputs = ci ++ (with pkgs;
               [
                 # Golang
                 go
@@ -81,7 +83,7 @@
                 kubectl # Kubernetes CLI
                 kubectx # Kubernetes context management utility
                 terraform
-              ];
+              ]);
           };
         });
 }
