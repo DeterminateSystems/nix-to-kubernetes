@@ -23,6 +23,9 @@ in
   '')
 
   (writeScriptBin "k8s-enable-ghcr" ''
+    ${run "kubectl"} delete secret ghcr-secret \
+      --ignore-not-found
+
     ${run "kubectl"} create secret docker-registry ghcr-secret \
       --docker-server=https://ghcr.io \
       --docker-username="''${GHCR_USERNAME}" \
