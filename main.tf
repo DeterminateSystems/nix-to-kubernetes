@@ -32,14 +32,6 @@ data "digitalocean_kubernetes_versions" "current" {
 }
 
 // Outputs
-output "k8s_cluster_name" {
-  value = digitalocean_kubernetes_cluster.nix_to_k8s.name
-}
-
-output "k8s_cluster_id" {
-  value = digitalocean_kubernetes_cluster.nix_to_k8s.id
-}
-
 output "k8s_context" {
   value = "do-${var.k8s_region}-${digitalocean_kubernetes_cluster.nix_to_k8s.name}"
 }
