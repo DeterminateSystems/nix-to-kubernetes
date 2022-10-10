@@ -81,7 +81,7 @@ jobs:
       - name: Set Kubernetes context
         run: |
           nix develop --command \
-            kubectx "${K8S_CONTEXT}"
+            kubectx ${{ secrets.K8S_CONTEXT }}
 
       - name: List nodes (to verify that kubectl can interact with the cluster)
         run: |
