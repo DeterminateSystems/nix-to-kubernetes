@@ -59,6 +59,7 @@ jobs:
           echo "Storing image tag ${{ env.IMAGE_TAG }} in the environment was successful"
 
   deploy:
+    needs: [build]
     runs-on: ubuntu-latest
     environment: deploy
     steps:
