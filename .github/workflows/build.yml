@@ -57,3 +57,13 @@ jobs:
       - name: Demonstrate that storing image tag works
         run: |
           echo "Storing image tag ${{ env.IMAGE_TAG }} in the environment was successful"
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: deploy
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+    steps:
+      # Make sure GitHub Actions can connect to the cluster
+      - name: List Kubernetes nodes
+        run: kubectl get nodes

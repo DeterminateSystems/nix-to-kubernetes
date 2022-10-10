@@ -16,22 +16,23 @@ Create resources:
 
 ```shell
 terraform init
-terraform apply
+terraform validate
+terraform apply -auto-approve
 ```
 
 Add the created cluster's [kubeconfig] to the `deploy` environment in GitHub Actions under the
 `KUBE_CONFIG` environment variable:
 
 ```shell
-terraform output --raw k8s_config | base64 | pbcopy
+terraform output -raw k8s_config | base64 | pbcopy
 ```
 
 Set up your local [kubectl] environment:
 
 ```shell
-K8S_CLUSTER_NAME="$(terraform output --raw k8s_cluster_name)"
+K8S_CLUSTER_NAME="$(terraform output -raw k8s_cluster_name)"
 doctl kubernetes cluster kubeconfig save "${K8S_CLUSTER_NAME}"
-K8S_CONTEXT="$(terraform output --raw k8s_context)"
+K8S_CONTEXT="$(terraform output -raw k8s_context)"
 kubectx "${K8S_CONTEXT}"
 
 # Verify that you can access the cluster by listing the nodes
