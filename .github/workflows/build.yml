@@ -71,12 +71,15 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
+      - name: Authenticate with DigitalOcean
+        run: |
+          nix develop --command \
+            doctl auth init --access-token ${{ secrets.DIGITALOCEAN_TOKEN }}
+
       - name: Import kubeconfig
         run: |
           nix develop --command \
-            doctl \
-            --access-token ${{ secrets.DIGITALOCEAN_TOKEN }} \
-            kubernetes cluster kubeconfig save ${{ secrets.K8S_CLUSTER_NAME }}
+            doctl kubernetes cluster kubeconfig save ${{ secrets.K8S_CLUSTER_NAME }}
 
       - name: Set Kubernetes context
         run: |
