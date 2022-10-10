@@ -90,3 +90,18 @@ jobs:
         run: |
           nix develop --command \
             kubectl get nodes
+
+      - name: Deploy Deployment (heh)
+        run: |
+          nix develop --command \
+            kubectl apply --filename=./kubernetes/deployment.yaml
+
+      - name: Set image
+        run: |
+          nix develop --command \
+            kubectl set image deployment.apps/horoscope-deployment horoscope="${{ env.IMAGE_TAG }}"
+
+      - name: Restart the Deployment
+        run: |
+          nix develop --command \
+            kubectl rollout restart deployment.apps/horoscope-deployment
