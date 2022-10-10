@@ -18,5 +18,6 @@ spec:
       containers:
         - name: horoscope
           image: ghcr.io/determinatesystems/horoscope:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
