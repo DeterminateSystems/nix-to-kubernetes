@@ -19,8 +19,9 @@ provider "digitalocean" {
 }
 
 provider "kubernetes" {
-  host  = data.digitalocean_kubernetes_cluster.nix_to_k8s.endpoint
-  token = data.digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].token
+  config_context = "nix-to-k8s"
+  host           = data.digitalocean_kubernetes_cluster.nix_to_k8s.endpoint
+  token          = data.digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].token
   cluster_ca_certificate = base64decode(
     data.digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].cluster_ca_certificate
   )
@@ -34,11 +35,6 @@ data "digitalocean_kubernetes_versions" "current" {
 // Outputs
 output "k8s_context" {
   value = "do-${var.k8s_region}-${digitalocean_kubernetes_cluster.nix_to_k8s.name}"
-}
-
-output "k8s_config" {
-  value     = digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].raw_config
-  sensitive = true
 }
 
 // Resources

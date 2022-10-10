@@ -15,7 +15,7 @@ in
   '')
 
   (writeScriptBin "k8s-set-ctx" ''
-    ${run "kubectx"} "''${K8S_CONTEXT}"
+    ${run "kubectx"} nix-to-k8s
   '')
 
   (writeScriptBin "k8s-get-nodes" ''

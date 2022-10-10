@@ -20,13 +20,6 @@ terraform validate
 terraform apply -auto-approve
 ```
 
-Add the created cluster's [kubeconfig] to the `deploy` environment in GitHub Actions under the
-`KUBE_CONFIG` environment variable:
-
-```shell
-terraform output -raw k8s_config | base64 | pbcopy
-```
-
 Set up your local [kubectl] environment:
 
 ```shell

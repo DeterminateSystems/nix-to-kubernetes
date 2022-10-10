@@ -87,8 +87,6 @@ jobs:
           nix develop --command do-get-kubeconfig
 
       - name: Set Kubernetes context
-        env:
-          K8S_CONTEXT: ${{ secrets.K8S_CONTEXT }}
         run: |
           nix develop --command k8s-set-ctx
 
