@@ -35,7 +35,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Load and push image to Docker Hub
+      - name: Load and push image to GHCR
         run: |
           export IMAGE_TAG=$(docker load < result | grep -Po 'Loaded image: \K.*')
           echo "Pushing image ${IMAGE_TAG} to GHCR"
