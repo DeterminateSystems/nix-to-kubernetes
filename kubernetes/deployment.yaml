@@ -1,0 +1,22 @@
+# Run 3 copies of our image behind a single load balancer
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: horoscope-deployment
+  labels:
+    app: horoscope
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: horoscope
+  template:
+    metadata:
+      labels:
+        app: horoscope
+    spec:
+      containers:
+        - name: horoscope
+          image: registry.k8s.io/echoserver:1.4 # Just a "seed" image that we'll update later
+          ports:
+            - containerPort: 8080
