@@ -64,6 +64,17 @@ jobs:
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
     steps:
-      # Make sure GitHub Actions can connect to the cluster
+      - name: git checkout
+        uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v15
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set Kubernetes context
+        run: nix develop --command kubectx ${{ secrets.K8S_CONTEXT }}
+
       - name: List Kubernetes nodes
-        run: kubectl get nodes
+        run: nix develop --command kubectl get nodes
