@@ -73,8 +73,7 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set Kubernetes context
-        run: nix develop --command kubectx ${{ secrets.K8S_CONTEXT }}
-
       - name: List Kubernetes nodes
-        run: nix develop --command kubectl get nodes
+        uses: actions-hub/kubectl@master
+        with:
+          args: get nodes
