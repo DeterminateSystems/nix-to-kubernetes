@@ -1,6 +1,11 @@
 {
   description = "Deploying Nix to Nomad";
 
+  inputs = {
+    nixpkgs.url = "nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
+  };
+
   outputs = { self, nixpkgs, flake-utils }:
     let
       name = "horoscope";
@@ -17,7 +22,12 @@
       goOverlay = self: super: {
         go = super."go_1_${toString goVersion}";
       };
-      overlays = [ goOverlay ];
+      terraformOverlay = self: super: {
+        terraform = super.terraform.overrideAttrs (_: {
+          version = "1.3.2";
+        });
+      };
+      overlays = [ goOverlay terraformOverlay ];
     in
 
     # Per-system outputs
@@ -67,7 +77,7 @@
                 printLatestImage
 
                 # DevOps
-                nomad
+                terraform
               ];
           };
         });

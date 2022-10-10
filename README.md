@@ -1,10 +1,8 @@
 # Nix to Nomad
 
-Setup
+## Setup
 
 ```shell
-ssh-keygen \
-  -t ed25519 \
-  -C "you@example.com" \
-  -f ~/.ssh/nix-nomad
+terraform init
+terraform apply
 ```
