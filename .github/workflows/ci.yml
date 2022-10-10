@@ -96,7 +96,14 @@ jobs:
         run: |
           nix develop --command k8s-get-nodes
 
-      - name: Deploy Deployment (heh)
+      - name: Enable GHCR in Kubernetes
+        env:
+          GHCR_USERNAME: ${{ github.repository_owner }}
+          GHCR_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          nix develop --command k8s-enable-ghcr
+
+      - name: kubectl apply
         run: |
           nix develop --command k8s-apply
 

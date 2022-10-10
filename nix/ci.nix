@@ -22,6 +22,13 @@ in
     ${run "kubectl"} get nodes
   '')
 
+  (writeScriptBin "k8s-enable-ghcr" ''
+    ${run "kubectl"} create secret docker-registry ghcr-secret \
+      --docker-server=https://ghcr.io \
+      --docker-username="''${GHCR_USERNAME}" \
+      --docker-password="''${GHCR_PASSWORD}"
+  '')
+
   (writeScriptBin "k8s-apply" ''
     ${run "kubectl"} apply --filename ./kubernetes/deployment.yaml
   '')
