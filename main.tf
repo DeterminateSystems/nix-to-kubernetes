@@ -19,9 +19,8 @@ provider "digitalocean" {
 }
 
 provider "kubernetes" {
-  config_context = "nix-to-k8s"
-  host           = data.digitalocean_kubernetes_cluster.nix_to_k8s.endpoint
-  token          = data.digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].token
+  host  = data.digitalocean_kubernetes_cluster.nix_to_k8s.endpoint
+  token = data.digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].token
   cluster_ca_certificate = base64decode(
     data.digitalocean_kubernetes_cluster.nix_to_k8s.kube_config[0].cluster_ca_certificate
   )
