@@ -15,11 +15,11 @@ spec:
       labels:
         app: horoscope
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret # Generated in earlier CI step
       containers:
         - name: horoscope
           image: ghcr.io/determinatesystems/horoscope:latest
           imagePullPolicy: Always
-          imagePullSecrets:
-            - name: ghcr-secret # Generated in earlier CI step
           ports:
             - containerPort: 8080
