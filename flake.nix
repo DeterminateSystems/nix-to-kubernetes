@@ -77,6 +77,9 @@
                 printLatestImage
 
                 # DevOps
+                doctl # DigitalOcean CLI
+                kubectl # Kubernetes CLI
+                kubectx # Kubernetes context management utility
                 terraform
               ];
           };
