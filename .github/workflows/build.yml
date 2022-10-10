@@ -61,13 +61,29 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: deploy
-    env:
-      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
     steps:
       - name: git checkout
         uses: actions/checkout@v3
 
-      - name: List Kubernetes nodes
-        uses: actions-hub/kubectl@master
+      - name: Install Nix
+        uses: cachix/install-nix-action@v15
         with:
-          args: get nodes
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Import kubeconfig
+        run: |
+          nix develop --command \
+            doctl \
+            --access-token ${{ secrets.DIGITALOCEAN_TOKEN }} \
+            kubernetes cluster kubeconfig save ${{ secrets.K8S_CLUSTER_NAME }}
+
+      - name: Set Kubernetes context
+        run: |
+          nix develop --command \
+            kubectx "${K8S_CONTEXT}"
+
+      - name: List nodes (to verify that kubectl can interact with the cluster)
+        run: |
+          nix develop --command \
+            kubectl get nodes
