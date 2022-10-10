@@ -23,7 +23,7 @@ terraform apply -auto-approve
 Set up your local [kubectl] environment:
 
 ```shell
-K8S_CLUSTER_NAME="$(terraform output -raw k8s_cluster_name)"
+K8S_CLUSTER_NAME="nix-to-k8s"
 doctl kubernetes cluster kubeconfig save "${K8S_CLUSTER_NAME}"
 K8S_CONTEXT="$(terraform output -raw k8s_context)"
 kubectx "${K8S_CONTEXT}"
@@ -34,3 +34,4 @@ kubectl get nodes
 
 [kubeconfig]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig
 [kubectl]: https://kubernetes.io/docs/reference/kubectl
+

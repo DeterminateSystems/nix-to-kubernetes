@@ -9,7 +9,7 @@ import (
 func main() {
     routes := gin.Default()
     routes.NoRoute(func(c *gin.Context) {
-        c.String(http.StatusOK, "Hello world")
+        c.String(http.StatusOK, "Welcome to the horoscope app")
     })
     routes.Run()
 }
