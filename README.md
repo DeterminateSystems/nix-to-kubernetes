@@ -33,12 +33,10 @@ terraform apply -auto-approve
 Set up your local [kubectl] environment:
 
 ```shell
-K8S_CLUSTER_NAME="nix-to-k8s"
 # Download the Kubernetes cluster config into ~/.kube/config
-doctl kubernetes cluster kubeconfig save "${K8S_CLUSTER_NAME}"
+doctl kubernetes cluster kubeconfig save "$(terraform output -raw k8s_cluster_name)"
 # Set the kubectl context to the DigitalOcean cluster
-K8S_CONTEXT="$(terraform output -raw k8s_context)"
-kubectx "${K8S_CONTEXT}"
+kubectx "$(terraform output -raw k8s_context)"
 
 # Verify that you can access the cluster by listing the nodes
 kubectl get nodes
