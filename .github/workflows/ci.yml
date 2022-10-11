@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest # x86_64-linux
-    environment: build
+    environment: build-and-deploy
     steps:
       - name: git checkout
         uses: actions/checkout@v3
