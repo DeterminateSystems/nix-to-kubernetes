@@ -28,7 +28,7 @@ provider "kubernetes" {
 
 // Data inputs
 data "digitalocean_kubernetes_versions" "current" {
-  version_prefix = "1.23"
+  version_prefix = var.k8s_version_prefix
 }
 
 // Outputs

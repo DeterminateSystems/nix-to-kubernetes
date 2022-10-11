@@ -27,3 +27,8 @@ variable "k8s_node_pool_name" {
   type        = string
   description = "Kubernetes node pool name"
 }
+
+variable "k8s_version_prefix" {
+  type        = string
+  description = "The version of Kubernetes to deploy"
+}
