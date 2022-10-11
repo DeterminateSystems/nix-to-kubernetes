@@ -1,4 +1,4 @@
-name: Build Docker container
+name: Build Docker container using Nix and deploy to Kubernetes
 on:
   pull_request:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest # x86_64-linux
     environment: build
     steps:
@@ -42,37 +42,11 @@ jobs:
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
           docker push "${IMAGE_TAG}"
 
-      - name: Tag new image as latest
-        run: |
-          LATEST=$(nix develop --command print-latest-image)
-          docker tag "${{ env.IMAGE_TAG }}" "${LATEST}"
-          docker push "${LATEST}"
-
       - name: Cache build artifacts
         run: |
           nix flake archive --json \
             | jq -r '.path,(.inputs|to_entries[].value.path)' \
             | cachix push "${{ secrets.CACHIX_CACHE }}"
-
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-latest
-    environment: deploy
-    steps:
-      - name: git checkout
-        uses: actions/checkout@v3
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v15
-        with:
-          extra_nix_config: |
-            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Cachix
-        uses: cachix/cachix-action@v10
-        with:
-          name: ${{ secrets.CACHIX_CACHE }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Authenticate with DigitalOcean
         env:
@@ -106,6 +80,12 @@ jobs:
       - name: kubectl apply
         run: |
           nix develop --command k8s-apply
+
+      - name: Update image
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+        run: |
+          nix develop --command k8s-update-image
 
       - name: Restart the Deployment
         run: |

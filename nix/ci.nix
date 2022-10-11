@@ -36,6 +36,10 @@ in
     ${run "kubectl"} apply --filename ./kubernetes/deployment.yaml
   '')
 
+  (writeScriptBin "k8s-update-image" ''
+    ${run "kubectl"} set image deployment.apps/horoscope-deployment horoscope="''${IMAGE_TAG}"
+  '')
+
   (writeScriptBin "k8s-restart-deployment" ''
     ${run "kubectl"} rollout restart deployment.apps/horoscope-deployment
   '')
