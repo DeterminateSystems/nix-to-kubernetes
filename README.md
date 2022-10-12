@@ -22,6 +22,13 @@ nix develop
 source .env
 ```
 
+Visualize:
+
+```shell
+terraform graph | dot -Tsvg > graph.svg
+open graph.svg
+```
+
 Create resources:
 
 ```shell

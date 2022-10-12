@@ -7,3 +7,6 @@ result
 # Terraform artifacts
 .terraform*
 terraform*
+
+# Graphviz artifacts
+graph.svg

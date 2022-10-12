@@ -83,6 +83,7 @@
                 kubectl # Kubernetes CLI
                 kubectx # Kubernetes context management utility
                 terraform
+                graphviz # For visualizing the Terraform graph
               ]);
           };
         });
