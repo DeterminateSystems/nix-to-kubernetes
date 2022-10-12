@@ -1,61 +1,32 @@
 # Nix to Kubernetes
 
-## Setup
+This repo provides an example of integrating [Nix] into a [DevOps] deployment
+pipeline. The scenario:
 
-Create an account with [DigitalOcean][do] and create a [token].
+* [Terraform] stands up a [Kubernetes] cluster on [DigitalOcean][do]
+* [Nix] provides a development environment for a simple&mdash;okay,
+  silly&mdash;[Go] web service that tells you your horoscope based on your star
+  sign.
 
-Create `.env` file and fill out missing values:
+This repo was created in conjunction with [Deploying Nix-built containers to
+Kubernetes][post], which is published on our [blog].
 
-```shell
-# Provide a value for DIGITALOCEAN_TOKEN
-cp .env.example .env
-```
+## Moving parts
 
-Enter Nix shell:
+* [Go web service](./cmd/horoscope)
+* [Terraform config](./main.tf)
+* [Terraform variable definitions](./variables.tf) and [variable
+  values](./terraform.tfvars)
+* [Kubernetes Deployment config](./kubernetes/deployment.yaml)
+* [Nix flake](./flake.nix)
+* [Nix-defined continous integration logic](./nix/ci.nix)
+* [GitHub Actions pipeline](./.github/workflows/ci.yml)
 
-```shell
-# If direnv is installed
-direnv allow
-
-# Otherwise
-nix develop
-source .env
-```
-
-Visualize:
-
-```shell
-terraform graph | dot -Tsvg > graph.svg
-open graph.svg
-```
-
-Create resources:
-
-```shell
-terraform init
-terraform validate
-terraform apply -auto-approve
-```
-
-Set up your local [kubectl] environment:
-
-```shell
-# Download the Kubernetes cluster config into ~/.kube/config
-doctl kubernetes cluster kubeconfig save "$(terraform output -raw k8s_cluster_name)"
-# Set the kubectl context to the DigitalOcean cluster
-kubectx "$(terraform output -raw k8s_context)"
-
-# Verify that you can access the cluster by listing the nodes
-kubectl get nodes
-
-# You should see output like this:
-NAME              STATUS   ROLES    AGE   VERSION
-k8s-nodes-75i7a   Ready    <none>   53m   v1.23.10
-k8s-nodes-75i7e   Ready    <none>   53m   v1.23.10
-k8s-nodes-75i7g   Ready    <none>   53m   v1.23.10
-```
-
+[blog]: https://determinate.systems/posts
+[devops]: https://atlassian.com/devops
 [do]: https://digitalocean.com
-[kubeconfig]: https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig
-[kubectl]: https://kubernetes.io/docs/reference/kubectl
-[token]: https://docs.digitalocean.com/reference/api/create-personal-access-token
+[go]: https://golang.org
+[kubernetes]: https://kubernetes.io
+[nix]: https://nixos.org
+[post]: https://determinate.systems/posts/nix-to-kubernetes
+[terraform]: https://terraform.io
