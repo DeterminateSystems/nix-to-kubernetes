@@ -38,10 +38,6 @@
             inherit overlays system;
           };
 
-          printLatestImage = pkgs.writeScriptBin "print-latest-image" ''
-            echo ${image.registry}/${image.owner}/${image.name}:latest | tr '[:upper:]' '[:lower:]'
-          '';
-
           ci = import ./nix/ci.nix { inherit pkgs; };
         in
         {
@@ -76,14 +72,13 @@
 
                 # Utilities
                 jq
-                printLatestImage
+                graphviz # For visualizing the Terraform graph
 
                 # DevOps
                 doctl # DigitalOcean CLI
                 kubectl # Kubernetes CLI
                 kubectx # Kubernetes context management utility
                 terraform
-                graphviz # For visualizing the Terraform graph
               ]);
           };
         });
