@@ -99,7 +99,8 @@ jobs:
           nix develop --command k8s-get-nodes
 
       # Authorize the Kubernetes cluster to pull images from GitHub Container
-      # Registry
+      # Registry by creating a special Kubernetes Secret of type
+      # `docker-registry`.
       - name: Enable GHCR in Kubernetes
         env:
           GHCR_USERNAME: ${{ github.repository_owner }}
