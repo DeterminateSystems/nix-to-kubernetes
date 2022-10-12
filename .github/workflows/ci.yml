@@ -19,6 +19,7 @@ jobs:
           extra_nix_config: |
             access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
+      # Use Cachix to speed up builds
       - name: Set up Cachix
         uses: cachix/cachix-action@v10
         with:
