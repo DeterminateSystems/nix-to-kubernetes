@@ -22,9 +22,17 @@ Kubernetes][post], which is published on our [blog].
 * [Nix-defined continous integration logic](./nix/ci.nix)
 * [GitHub Actions pipeline](./.github/workflows/ci.yml)
 
+The GitHub Actions pipeline includes Nix [remote caching][cache] provided by
+[Cachix]. [GitHub Container Registry][ghcr] is used to store [Docker] images
+built by Nix.
+
 [blog]: https://determinate.systems/posts
+[cache]: https://nixos.wiki/wiki/Binary_Cache
+[cachix]: https://cachix.org
 [devops]: https://atlassian.com/devops
 [do]: https://digitalocean.com
+[docker]: https://docker.com
+[ghcr]: https://github.com/features/packages
 [go]: https://golang.org
 [kubernetes]: https://kubernetes.io
 [nix]: https://nixos.org
