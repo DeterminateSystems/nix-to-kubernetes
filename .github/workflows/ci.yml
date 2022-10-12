@@ -1,4 +1,5 @@
 name: Build Docker container using Nix and deploy to Kubernetes
+
 on:
   pull_request:
   push:
@@ -70,28 +71,35 @@ jobs:
             | jq -r '.path,(.inputs|to_entries[].value.path)' \
             | cachix push "${{ secrets.CACHIX_CACHE }}"
 
+      # Enable admin access to the DigitalOcean Kubernetes service
       - name: Authenticate with DigitalOcean
         env:
           DO_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
         run: |
           nix develop --command do-authenticate
 
+      # Import the Kubernetes configuration for our cluster into the CI
+      # environment (so that kubectl knows how to talk to the cluster)
       - name: Import kubeconfig
         env:
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
         run: |
           nix develop --command do-get-kubeconfig
 
+      # Use the handy kubectx tool to enable kubectl to talk to the cluster
       - name: Set Kubernetes context
         env:
           K8S_CONTEXT: ${{ secrets.K8S_CONTEXT }}
         run: |
           nix develop --command k8s-set-ctx
 
+      # "Ping" the cluster by listing available nodes
       - name: List nodes (to verify that kubectl can interact with the cluster)
         run: |
           nix develop --command k8s-get-nodes
 
+      # Authorize the Kubernetes cluster to pull images from GitHub Container
+      # Registry
       - name: Enable GHCR in Kubernetes
         env:
           GHCR_USERNAME: ${{ github.repository_owner }}
@@ -99,16 +107,22 @@ jobs:
         run: |
           nix develop --command k8s-enable-ghcr
 
+      # Apply our Kubernetes Deployment's configuration
       - name: kubectl apply
         run: |
           nix develop --command k8s-apply
 
+      # Initially, the Deployment runs the `registry.k8s.io/echoserver:1.4`
+      # image, which is meant to be replaced by our horoscope image. This step
+      # replaces the `echoserver` image with the freshly built service.
       - name: Update image
         env:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
           nix develop --command k8s-update-image
 
+      # Kubernetes now knows which image to pull for our Deployment, but a
+      # restart is necessary to actually pull/run the image.
       - name: Restart the Deployment
         run: |
           nix develop --command k8s-restart-deployment
