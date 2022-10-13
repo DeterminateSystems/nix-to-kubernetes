@@ -7,6 +7,9 @@ pipeline. The scenario:
 * [Nix] provides a development environment for a simple&mdash;okay,
   silly&mdash;[Go] web service that tells you your horoscope based on your star
   sign.
+* Nix also builds a [Docker] image for the web service.
+* A [GitHub Actions][actions] pipeline builds and then deploys the image to a
+  [Kubernetes] cluster running on [DigitalOcean][do].
 
 This repo was created in conjunction with [Deploying Nix-built containers to
 Kubernetes][post], which is published on our [blog].
@@ -18,7 +21,8 @@ Kubernetes][post], which is published on our [blog].
 * [Terraform variable definitions](./variables.tf) and [variable
   values](./terraform.tfvars)
 * [Kubernetes Deployment config](./kubernetes/deployment.yaml)
-* [Nix flake](./flake.nix)
+* A [Nix flake](./flake.nix) defines the development environment and package/app
+  outputs
 * [Nix-defined continous integration logic](./nix/ci.nix)
 * [GitHub Actions pipeline](./.github/workflows/ci.yml)
 
@@ -26,6 +30,7 @@ The GitHub Actions pipeline includes Nix [remote caching][cache] provided by
 [Cachix]. [GitHub Container Registry][ghcr] is used to store [Docker] images
 built by Nix.
 
+[actions]: https://github.com/features/actions
 [blog]: https://determinate.systems/posts
 [cache]: https://nixos.wiki/wiki/Binary_Cache
 [cachix]: https://cachix.org
