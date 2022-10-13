@@ -83,6 +83,21 @@ jobs:
     # DIGITALOCEAN_TOKEN is an API token to access DigitalOcean
     environment: deploy
     steps:
+      # Install Nix and set up a local Nix store under /nix/store.
+      - name: Install Nix
+        uses: cachix/install-nix-action@v18
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            binary-caches = https://cache.nixos.org https://${{ secrets.CACHIX_CACHE }}.cachix.org
+
+      # Use Cachix to speed up builds
+      - name: Set up Cachix
+        uses: cachix/cachix-action@v11
+        with:
+          name: ${{ secrets.CACHIX_CACHE }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
       # Enable admin access to the DigitalOcean Kubernetes service
       - name: Authenticate with DigitalOcean
         env:
