@@ -83,6 +83,9 @@ jobs:
     # DIGITALOCEAN_TOKEN is an API token to access DigitalOcean
     environment: deploy
     steps:
+      - name: git checkout
+        uses: actions/checkout@v3
+
       # Install Nix and set up a local Nix store under /nix/store.
       - name: Install Nix
         uses: cachix/install-nix-action@v18
