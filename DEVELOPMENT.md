@@ -60,7 +60,16 @@ k8s-nodes-75i7e   Ready    <none>   53m   v1.23.10
 k8s-nodes-75i7g   Ready    <none>   53m   v1.23.10
 ```
 
-Once the cluster is ready, the [CI pipeline][ci] should work as expected.
+Once the cluster is ready, the [CI pipeline][ci] should work as expected. When
+the pipeline finishes building/deploying, you can interact with the running
+service via port forwarding:
+
+```shell
+kubectl port-forward deployments.apps/horoscope-deployment 8080:8080
+
+# In another window (httpie is provided in the Nix environment)
+http --body :8080/pisces
+```
 
 [ci]: ./.github/workflows/ci.yml
 [do]: https://digitalocean.com

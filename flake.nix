@@ -73,6 +73,7 @@
                 # Utilities
                 jq
                 graphviz # For visualizing the Terraform graph
+                python39Packages.httpie
 
                 # DevOps
                 doctl # DigitalOcean CLI
