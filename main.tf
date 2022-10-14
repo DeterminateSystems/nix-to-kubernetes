@@ -1,11 +1,14 @@
 // Terraform and provider metadata
 terraform {
+  # Matches the version specified in flake.nix to ensure compatibility
   required_version = "1.3.2"
   required_providers {
+    # To stand up the Kubernetes cluster
     digitalocean = {
       source  = "digitalocean/digitalocean"
-      version = "2.22.1"
+      version = "2.23.0"
     }
+    # To interact with and manage the cluster itself
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = "2.14.0"

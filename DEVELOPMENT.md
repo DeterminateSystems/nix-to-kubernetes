@@ -47,6 +47,7 @@ Once that's done, set up your local [kubectl] environment to talk to the
 ```shell
 # Download the Kubernetes cluster config into ~/.kube/config
 doctl kubernetes cluster kubeconfig save "$(terraform output -raw k8s_cluster_name)"
+
 # Set the kubectl context to the DigitalOcean cluster
 kubectx "$(terraform output -raw k8s_context)"
 
@@ -78,3 +79,4 @@ http --body :8080/pisces
 [kubernetes]: https://kubernetes.io
 [lucperkins]: https://github.com/lucperkins
 [token]: https://docs.digitalocean.com/reference/api/create-personal-access-token
+
