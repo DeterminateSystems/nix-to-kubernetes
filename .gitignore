@@ -5,7 +5,7 @@
 result
 
 # Terraform artifacts
-.terraform*
+.terraform/
 terraform*
 
 # Graphviz artifacts
