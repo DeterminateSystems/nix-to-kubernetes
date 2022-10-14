@@ -30,6 +30,11 @@ The GitHub Actions pipeline includes Nix [remote caching][cache] provided by
 [Cachix]. [GitHub Container Registry][ghcr] is used to store [Docker] images
 built by Nix.
 
+## Developing the scenario
+
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for instructions on standing up the
+infrastructure and interacting with the cluster.
+
 [actions]: https://github.com/features/actions
 [blog]: https://determinate.systems/posts
 [cache]: https://nixos.wiki/wiki/Binary_Cache
