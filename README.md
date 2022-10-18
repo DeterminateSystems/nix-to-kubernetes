@@ -24,7 +24,10 @@ Kubernetes][post], which is published on our [blog].
 * A [Nix flake](./flake.nix) defines the development environment and package/app
   outputs
 * [Nix-defined continous integration logic](./nix/ci.nix)
-* [GitHub Actions pipeline](./.github/workflows/ci.yml)
+* [GitHub Actions pipeline](./.github/workflows/ci.yml). **Note**: the [`deploy`][deploy] job in the
+  Actions pipeline is expected to fail, as it assumes that the Kubernetes cluster is currently
+  running. We're gonna go ahead and save costs by `terraform destroy`ing the cluster when we're not
+  using it 😀
 
 The GitHub Actions pipeline includes Nix [remote caching][cache] provided by
 [Cachix]. [GitHub Container Registry][ghcr] is used to store [Docker] images
@@ -39,6 +42,7 @@ infrastructure and interacting with the cluster.
 [blog]: https://determinate.systems/posts
 [cache]: https://nixos.wiki/wiki/Binary_Cache
 [cachix]: https://cachix.org
+[deploy]: ./.github/workflows/ci.yml#L82
 [devops]: https://atlassian.com/devops
 [do]: https://digitalocean.com
 [docker]: https://docker.com
@@ -48,3 +52,4 @@ infrastructure and interacting with the cluster.
 [nix]: https://nixos.org
 [post]: https://determinate.systems/posts/nix-to-kubernetes
 [terraform]: https://terraform.io
+
