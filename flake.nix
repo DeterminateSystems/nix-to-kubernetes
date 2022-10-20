@@ -95,5 +95,10 @@
                 terraform
               ]);
           };
+
+          # Enable running the service locally using `nix run`
+          apps.default = flake-utils.lib.mkApp {
+            drv = self.packages.${system}.default;
+          };
         });
 }

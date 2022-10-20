@@ -36,7 +36,7 @@ data "digitalocean_kubernetes_versions" "current" {
 
 // Outputs
 output "k8s_context" {
-  value = "do-${var.k8s_region}-${digitalocean_kubernetes_cluster.nix_to_k8s.name}"
+  value = "do-${var.do_region}-${digitalocean_kubernetes_cluster.nix_to_k8s.name}"
 }
 
 output "k8s_cluster_name" {
@@ -46,7 +46,7 @@ output "k8s_cluster_name" {
 // Resources
 resource "digitalocean_kubernetes_cluster" "nix_to_k8s" {
   name    = var.k8s_cluster_name
-  region  = var.k8s_region
+  region  = var.do_region
   version = data.digitalocean_kubernetes_versions.current.latest_version
 
   node_pool {
