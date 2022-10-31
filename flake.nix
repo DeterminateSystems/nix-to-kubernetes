@@ -57,7 +57,7 @@
             # non-x86_64-linux system, despite the build succeeding. There are ways around this in
             # Nix but in this case we only need to build the image in CI.
             docker =
-              pkgs.dockerTools.streamImage {
+              pkgs.dockerTools.buildLayeredImage {
                 name = "${image.registry}/${image.owner}/${image.name}";
                 config = {
                   Cmd = [ "${self.packages.${system}.default}/bin/${name}" ];
