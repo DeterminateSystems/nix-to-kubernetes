@@ -17,20 +17,9 @@
         owner = "DeterminateSystems";
       };
 
-      # Tool versions
-      goVersion = 19;
-
       # The hash for the service's Go dependencies. Nix requires this to ensure
       # determinate builds.
       vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
-
-      # An overlay for exposing a specific Go version as pkgs.go
-      goOverlay = self: super: rec {
-        go = super."go_1_${toString goVersion}";
-      };
-
-      # The combined overlays
-      overlays = [ goOverlay ];
     in
 
     # Per-system outputs for the default systems here:
@@ -40,15 +29,16 @@
         let
           # Custom Nixpkgs for the current system and with overlay applied
           pkgs = import nixpkgs {
-            inherit overlays system;
+            inherit system;
           };
         in
         {
           packages = rec {
+            # Enables us to build the Go service by running plain `nix build`
             default = horoscope;
 
-            # Our Go service as a standard Go module
-            horoscope = pkgs.buildGoModule {
+            # Our Go service as a standard Go module (Go 1.19)
+            horoscope = pkgs.buildGo119Module {
               inherit name vendorSha256;
               src = ./.;
             };
@@ -60,7 +50,7 @@
               pkgs.dockerTools.buildLayeredImage {
                 name = "${image.registry}/${image.owner}/${image.name}";
                 config = {
-                  Cmd = [ "${self.packages.${system}.default}/bin/${name}" ];
+                  Cmd = [ "${horoscope}/bin/${name}" ];
                   ExposedPorts."8080/tcp" = { };
                 };
                 maxLayers = 120;
@@ -73,7 +63,7 @@
             buildInputs = with pkgs;
               [
                 # Golang
-                go
+                go_1_19
                 gotools
 
                 # Utilities
@@ -87,11 +77,6 @@
                 kubectx # Kubernetes context management utility
                 terraform
               ];
-          };
-
-          # Enable running the service locally using `nix run`
-          apps.default = flake-utils.lib.mkApp {
-            drv = self.packages.${system}.default;
           };
         });
 }
