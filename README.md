@@ -23,7 +23,7 @@ Kubernetes][post], which is published on our [blog].
 * [Kubernetes Deployment config](./kubernetes/deployment.yaml)
 * A [Nix flake](./flake.nix) defines the development environment and package/app
   outputs
-* [Nix-defined continous integration logic](./nix/ci.nix)
+* [Nix-defined continous integration logic](./flake.nix#L71-L90)
 * [GitHub Actions pipeline](./.github/workflows/ci.yml). **Note**: the [`deploy`][deploy] job in the
   Actions pipeline is expected to fail, as it assumes that the Kubernetes cluster is currently
   running. We're gonna go ahead and save costs by `terraform destroy`ing the cluster when we're not
