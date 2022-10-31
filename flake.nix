@@ -17,24 +17,20 @@
         owner = "DeterminateSystems";
       };
 
-      # The hash for the service's Go dependencies
+      # Tool versions
+      goVersion = 19;
+
+      # The hash for the service's Go dependencies. Nix requires this to ensure
+      # determinate builds.
       vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
 
       # An overlay for exposing a specific Go version as pkgs.go
-      goVersion = 19;
       goOverlay = self: super: rec {
         go = super."go_1_${toString goVersion}";
       };
 
-      # An overlay for specifying the Terraform version
-      terraformOverlay = self: super: {
-        terraform = super.terraform.overrideAttrs (_: {
-          version = "1.3.2";
-        });
-      };
-
       # The combined overlays
-      overlays = [ goOverlay terraformOverlay ];
+      overlays = [ goOverlay ];
     in
 
     # Per-system outputs for the default systems here:
@@ -42,13 +38,10 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          # Custom Nixpkgs for the current system and with overlays applied
+          # Custom Nixpkgs for the current system and with overlay applied
           pkgs = import nixpkgs {
             inherit overlays system;
           };
-
-          # Import the CI scripts into the dev environment
-          ci = import ./nix/ci.nix { inherit pkgs; };
         in
         {
           packages = rec {
@@ -64,7 +57,7 @@
             # non-x86_64-linux system, despite the build succeeding. There are ways around this in
             # Nix but in this case we only need to build the image in CI.
             docker =
-              pkgs.dockerTools.buildLayeredImage {
+              pkgs.dockerTools.streamImage {
                 name = "${image.registry}/${image.owner}/${image.name}";
                 config = {
                   Cmd = [ "${self.packages.${system}.default}/bin/${name}" ];
@@ -77,7 +70,7 @@
           # Cross-platform development environment (including CI)
           devShells.default = pkgs.mkShell {
             # Packages available in the environment
-            buildInputs = ci ++ (with pkgs;
+            buildInputs = with pkgs;
               [
                 # Golang
                 go
@@ -93,7 +86,7 @@
                 kubectl # Kubernetes CLI
                 kubectx # Kubernetes context management utility
                 terraform
-              ]);
+              ];
           };
 
           # Enable running the service locally using `nix run`

@@ -111,7 +111,8 @@ jobs:
         env:
           DO_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
         run: |
-          nix develop --command do-authenticate
+          nix develop --command \
+            doctl auth init --access-token "${DO_TOKEN}"
 
       # Import the Kubernetes configuration for our cluster into the CI
       # environment (so that kubectl knows how to talk to the cluster)
@@ -119,19 +120,22 @@ jobs:
         env:
           K8S_CLUSTER_NAME: ${{ secrets.K8S_CLUSTER_NAME }}
         run: |
-          nix develop --command do-get-kubeconfig
+          nix develop --command \
+            doctl kubernetes cluster kubeconfig save "${K8S_CLUSTER_NAME}"
 
       # Use the handy kubectx tool to enable kubectl to talk to the cluster
       - name: Set Kubernetes context
         env:
           K8S_CONTEXT: ${{ secrets.K8S_CONTEXT }}
         run: |
-          nix develop --command k8s-set-ctx
+          nix develop --command \
+            kubectx "${K8S_CONTEXT}"
 
       # "Ping" the cluster by listing available nodes
       - name: List nodes (to verify that kubectl can interact with the cluster)
         run: |
-          nix develop --command k8s-get-nodes
+          nix develop --command \
+            kubectl get nodes
 
       # Authorize the Kubernetes cluster to pull images from GitHub Container
       # Registry by creating a special Kubernetes Secret of type
@@ -141,12 +145,21 @@ jobs:
           GHCR_USERNAME: ${{ github.repository_owner }}
           GHCR_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          nix develop --command k8s-enable-ghcr
+          nix develop --command \
+            kubectl delete secret ghcr-secret --ignore-not-found
+
+          nix develop --command \
+            kubectl create secret docker-registry ghcr-secret \
+              --docker-server=https://ghcr.io \
+              --docker-username "${GHCR_USERNAME}" \
+              --docker-password "${GHCR_PASSWORD}"
 
       # Apply our Kubernetes Deployment's configuration
       - name: kubectl apply
         run: |
-          nix develop --command k8s-apply
+          nix develop --command \
+            kubectl apply \
+              --filename ./kubernetes/deployment.yaml
 
       # Initially, the Deployment runs the `registry.k8s.io/echoserver:1.4`
       # image, which is meant to be replaced by our horoscope image. This step
@@ -155,10 +168,13 @@ jobs:
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image }}
         run: |
-          nix develop --command k8s-update-image
+          nix develop --command \
+            kubectl set image deployment.apps/horoscope-deployment \
+              horoscope="${IMAGE_TAG}"
 
       # Kubernetes now knows which image to pull for our Deployment, but a
       # restart is necessary to actually pull/run the image.
       - name: Restart the Deployment
         run: |
-          nix develop --command k8s-restart-deployment
+          nix develop --command \
+            kubectl rollout restart deployment.apps/horoscope-deployment
