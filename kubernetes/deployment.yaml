@@ -19,7 +19,7 @@ spec:
         - name: ghcr-secret # Generated in earlier CI step
       containers:
         - name: horoscope
-          image: registry.k8s.io/echoserver:1.4 # CI immediately replaces this image
+          image: ghcr.io/determinatesystems/horoscope:latest # CI immediately replaces this image
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
