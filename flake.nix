@@ -1,3 +1,5 @@
+# See flake.lock for the specific Git revisions that our flake inputs are
+# pinned to.
 {
   description = "Deploying Nix-built Docker images to Kubernetes";
 
