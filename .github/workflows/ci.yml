@@ -161,9 +161,7 @@ jobs:
             kubectl apply \
               --filename ./kubernetes/deployment.yaml
 
-      # Initially, the Deployment runs the `registry.k8s.io/echoserver:1.4`
-      # image, which is meant to be replaced by our horoscope image. This step
-      # replaces the `echoserver` image with the freshly built service.
+      # Update the deployed image to the most recently built and pushed
       - name: Update image
         env:
           IMAGE_TAG: ${{ needs.build.outputs.image }}
