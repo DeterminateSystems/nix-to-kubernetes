@@ -22,6 +22,11 @@ jobs:
       - name: git checkout
         uses: actions/checkout@v3
 
+      - name: Check Nixpkgs inputs
+        uses: DeterminateSystems/flake-checker-action@v3
+        with:
+          fail-mode: true
+
       # Install Nix and set up a local Nix store under /nix/store
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
