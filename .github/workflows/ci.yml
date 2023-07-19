@@ -73,6 +73,7 @@ jobs:
 
   # Deploy the newly built image to Kubernetes
   deploy:
+    if: false
     needs: build
     runs-on: ubuntu-latest # x86_64-linux
     environment: deploy
