@@ -7,54 +7,40 @@ on:
       - main
 
 jobs:
+  # Various checks
+  check:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v3
+      - name: Check Nixpkgs inputs
+        uses: DeterminateSystems/flake-checker-action@main
+        with:
+          fail-mode: true
+
   # Build the Docker image using Nix
   build:
     # We need to use this machine type (x86_64-linux in Nix) or else the
     # Nix-built Docker image won't run properly
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment: build
-    # This environment includes a number of secrets:
-    # CACHIX_CACHE is the name of the Cachix cache
-    # CACHIX_AUTH_TOKEN is the auth token required to access CACHIX_CACHE
     outputs:
       image: ${{ steps.set-image.outputs.image }}
     steps:
       - name: git checkout
         uses: actions/checkout@v3
 
-      - name: Check Nixpkgs inputs
-        uses: DeterminateSystems/flake-checker-action@main
-        with:
-          fail-mode: true
-
       # Install Nix and set up a local Nix store under /nix/store
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra-conf: |
-            binary-caches = https://cache.nixos.org https://${{ secrets.CACHIX_CACHE }}.cachix.org
 
+      # Cache any artifacts that aren't already cached at https://cache.nixos.org
       - name: Enable magic Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@main
-
-      # Use Cachix to speed up builds
-      - name: Set up Cachix
-        uses: cachix/cachix-action@v11
-        with:
-          name: ${{ secrets.CACHIX_CACHE }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       # Note that we use Nix to build the Docker image and NOT the Docker CLI
       - name: Build Docker image for horoscope service using Nix
         run: nix build ".#docker"
-
-      # All Nix build artifacts are cached in Cachix, which should speed up
-      # future builds.
-      - name: Cache build artifacts
-        run: |
-          nix flake archive --json \
-            | jq -r '.path,(.inputs|to_entries[].value.path)' \
-            | cachix push "${{ secrets.CACHIX_CACHE }}"
 
       # We need to log into the GitHub Container Registry in order to push images
       - name: Docker login
@@ -101,19 +87,9 @@ jobs:
       # Install Nix and set up a local Nix store under /nix/store.
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-        with:
-          extra_nix_config: |
-            binary-caches = https://cache.nixos.org https://${{ secrets.CACHIX_CACHE }}.cachix.org
 
       - name: Enable magic Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@main
-
-      # Use Cachix to speed up builds
-      - name: Set up Cachix
-        uses: cachix/cachix-action@v11
-        with:
-          name: ${{ secrets.CACHIX_CACHE }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       # Enable admin access to the DigitalOcean Kubernetes service
       - name: Authenticate with DigitalOcean

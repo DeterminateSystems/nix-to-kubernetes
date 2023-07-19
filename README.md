@@ -30,8 +30,7 @@ Kubernetes][post], which is published on our [blog].
   and save costs (and electricity) by `terraform destroy`ing the cluster when
   we're not using it 😀
 
-The GitHub Actions pipeline includes Nix [remote caching][cache] provided by
-[Cachix]. [GitHub Container Registry][ghcr] stores [Docker] images built by Nix.
+[GitHub Container Registry][ghcr] stores [Docker] images built by Nix.
 
 ## Developing this scenario
 
@@ -41,7 +40,6 @@ infrastructure and interacting with the Kubernetes cluster.
 [actions]: https://github.com/features/actions
 [blog]: https://determinate.systems/posts
 [cache]: https://nixos.wiki/wiki/Binary_Cache
-[cachix]: https://cachix.org
 [deploy]: ./.github/workflows/ci.yml#L82
 [devops]: https://atlassian.com/devops
 [do]: https://digitalocean.com
