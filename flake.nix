@@ -5,8 +5,8 @@
 
   # Flake inputs (the Nix code sources we need to rely on here)
   inputs = {
-    nixpkgs.url = "nixpkgs";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2305.491476.tar.gz";
+    flake-utils.url = "https://flakehub.com/f/numtide/flake-utils/0.1.87.tar.gz";
   };
 
   # Flake outputs (the stuff we want to provide in this flake)
