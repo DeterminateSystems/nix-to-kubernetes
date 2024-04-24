@@ -5,7 +5,7 @@
 
   # Flake inputs (the Nix code sources we need to rely on here)
   inputs = {
-    nixpkgs.url = "nixpkgs";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.*";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
