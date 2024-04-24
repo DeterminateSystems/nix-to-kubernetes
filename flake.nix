@@ -5,7 +5,7 @@
 
   # Flake inputs (the Nix code sources we need to rely on here)
   inputs = {
-    nixpkgs.url = "nixpkgs";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.*";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -24,17 +24,18 @@
       # The calculated hash for the service's Go dependencies. Nix requires
       # this to ensure reproducible builds. Any time the Go dependencies
       # change, we need to update this.
-      vendorSha256 = "sha256-fwJTg/HqDAI12mF1u/BlnG52yaAlaIMzsILDDZuETrI=";
+      vendorHash = "sha256-cNcwAG7DliZbgb3AE7y8c8I2C/O1iaXHTdaHkJGtoEs=";
     in
 
     # Per-system outputs for the default systems here:
-    # https://github.com/numtide/flake-utils/blob/master/default.nix#L3-L9
+      # https://github.com/numtide/flake-utils/blob/master/default.nix#L3-L9
     flake-utils.lib.eachDefaultSystem
       (system:
         let
           # Custom Nixpkgs for the current system
           pkgs = import nixpkgs {
             inherit system;
+            config.allowUnfree = true;
           };
         in
         {
@@ -43,8 +44,8 @@
             default = horoscope;
 
             # Our Go service as a standard Go module (Go 1.19)
-            horoscope = pkgs.buildGo119Module {
-              inherit name vendorSha256;
+            horoscope = pkgs.buildGo122Module {
+              inherit name vendorHash;
               src = ./.;
             };
 
@@ -66,16 +67,16 @@
           # Cross-platform development environment (including CI)
           devShells.default = pkgs.mkShell {
             # Packages available in the environment
-            buildInputs = with pkgs;
+            packages = with pkgs;
               [
                 # Golang
-                go_1_19
+                go_1_22
                 gotools # goimports, etc.
 
                 # Utilities
                 jq
                 graphviz # For visualizing the Terraform graph
-                python39Packages.httpie # For arbitrary HTTP calls
+                httpie # For arbitrary HTTP calls
 
                 # DevOps
                 doctl # DigitalOcean CLI
