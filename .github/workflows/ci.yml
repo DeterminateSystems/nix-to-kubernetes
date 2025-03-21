@@ -85,9 +85,10 @@ jobs:
       - name: Enable FlakeHub Cache
         uses: DeterminateSystems/flakehub-cache-action@main
 
-      - name: Build and cache dev shell
+      - name: Build and cache dev shell and package on ${{ matrix.runners.system }}
         run: |
           nix build ".#devShells.${{ matrix.runners.system }}.default"
+          nix build ".#packages.${{ matrix.runners.system }}.horoscope"
 
   # Deploy the newly built image to Kubernetes
   deploy:
