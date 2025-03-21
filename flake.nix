@@ -30,7 +30,7 @@
           packages = with pkgs;
             [
               # Golang
-              go_1_22
+              go # Go 1.23.6
               gotools # goimports, etc.
 
               # Utilities
