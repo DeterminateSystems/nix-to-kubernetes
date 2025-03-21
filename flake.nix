@@ -21,17 +21,6 @@
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
 
       forEachSupportedSystem = forSystem supportedSystems;
-
-      image = {
-        name = "horoscope";
-        registry = "ghcr.io";
-        owner = "DeterminateSystems";
-      };
-
-      # The calculated hash for the service's Go dependencies. Nix requires
-      # this to ensure reproducible builds. Any time the Go dependencies
-      # change, we need to update this.
-      vendorHash = "sha256-cNcwAG7DliZbgb3AE7y8c8I2C/O1iaXHTdaHkJGtoEs=";
     in
     {
       # Cross-platform development environment (including CI)
@@ -62,7 +51,10 @@
         # Our Go service as a standard Go module (Go 1.19)
         horoscope = pkgs.buildGoModule {
           name = "horoscope";
-          inherit vendorHash;
+          # The calculated hash for the service's Go dependencies. Nix requires
+          # this to ensure reproducible builds. Any time the Go dependencies
+          # change, we need to update this.
+          vendorHash = "sha256-cNcwAG7DliZbgb3AE7y8c8I2C/O1iaXHTdaHkJGtoEs=";
           src = ./.;
         };
       });
@@ -71,15 +63,23 @@
       # non-`x86_64-linux` system, despite the build succeeding. There are
       # ways around this in Nix but in this case we only need to build the
       # image in CI.
-      dockerImages = forEachSupportedSystem ({ pkgs }: {
-        horoscope = pkgs.dockerTools.buildLayeredImage {
-          name = "${image.registry}/${image.owner}/${image.name}";
-          config = {
-            Cmd = [ "${inputs.self.packages.x86_64-linux.horoscope}/bin/horoscope" ];
-            ExposedPorts."8080/tcp" = { };
+      dockerImages =
+        let
+          image = {
+            name = "horoscope";
+            registry = "ghcr.io";
+            owner = "DeterminateSystems";
           };
-          maxLayers = 120;
-        };
-      });
+        in
+        forEachSupportedSystem ({ pkgs }: {
+          horoscope = pkgs.dockerTools.buildLayeredImage {
+            name = "${image.registry}/${image.owner}/${image.name}";
+            config = {
+              Cmd = [ "${inputs.self.packages.x86_64-linux.horoscope}/bin/horoscope" ];
+              ExposedPorts."8080/tcp" = { };
+            };
+            maxLayers = 120;
+          };
+        });
     };
 }
