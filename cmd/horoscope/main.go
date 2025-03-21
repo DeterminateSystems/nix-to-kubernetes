@@ -8,7 +8,7 @@ import (
 )
 
 var horoscopes = map[string]string{
-    "aries": "Someone close who owes you money might suddenly turn up and repay you,",
+    "aries": "Someone close who owes you money might suddenly turn up and repay you",
     "taurus": "Today you should feel especially warm and loving toward everyone close to you",
     "gemini": "You should be looking especially attractive today and glowing with robust health",
     "cancer": "Today you should be feeling especially warm and loving toward close friends and children",
