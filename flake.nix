@@ -54,7 +54,7 @@
           # The calculated hash for the service's Go dependencies. Nix requires
           # this to ensure reproducible builds. Any time the Go dependencies
           # change, we need to update this.
-          vendorHash = "sha256-cNcwAG7DliZbgb3AE7y8c8I2C/O1iaXHTdaHkJGtoEs=";
+          vendorHash = "sha256-rinpy8qlSpKg0N3KsuzD1FjkDh7maERVXd13urHGyU0=";
           src = ./.;
         };
       });
