@@ -17,7 +17,7 @@ jobs:
       image: ${{ steps.set-image.outputs.image }}
     steps:
       - name: git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Install Nix and set up a local Nix store under /nix/store
       - name: Install Nix
@@ -60,6 +60,35 @@ jobs:
         run: |
           echo "::set-output name=image::${{ env.IMAGE_TAG }}"
 
+  # Cache dev shell and package on all platforms in FlakeHub Cache
+  cache-all-systems:
+    strategy:
+      matrix:
+        runners:
+          - system: x86_64-linux
+            runner: UbuntuLatest32Cores128G
+          - system: aarch64-linux
+            runner: UbuntuLatest32Cores128GArm
+          - system: x86_64-darwin
+            runner: macos-latest-xlarge
+          - system: aarch64-darwin
+            runner: macos-latest-xlarge
+    runs-on: ${{ matrix.runners.runner }}
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v4
+
+      # Install Nix and set up a local Nix store under /nix/store.
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Enable FlakeHub Cache
+        uses: DeterminateSystems/flakehub-cache-action@main
+
+      - name: Build and cache dev shell
+        run: |
+          nix build ".#devShells.${{ matrix.runners.system }}.default"
+
   # Deploy the newly built image to Kubernetes
   deploy:
     if: false
@@ -72,7 +101,7 @@ jobs:
     # DIGITALOCEAN_TOKEN is an API token to access DigitalOcean
     steps:
       - name: git checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Install Nix and set up a local Nix store under /nix/store.
       - name: Install Nix

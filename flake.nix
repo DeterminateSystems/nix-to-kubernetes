@@ -75,7 +75,7 @@
           horoscope = pkgs.dockerTools.buildLayeredImage {
             name = "${image.registry}/${image.owner}/${image.name}";
             config = {
-              Cmd = [ "${inputs.self.packages.x86_64-linux.horoscope}/bin/horoscope" ];
+              Entrypoint = [ "${inputs.self.packages.x86_64-linux.horoscope}/bin/horoscope" ];
               ExposedPorts."8080/tcp" = { };
             };
             maxLayers = 120;
